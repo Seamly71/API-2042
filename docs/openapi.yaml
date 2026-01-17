@@ -1,0 +1,370 @@
+openapi: 3.0.2
+info:
+  title: 'API-2042'
+  version: 'v1'
+paths:
+  /api/auth/register/:
+    post:
+      operationId: Зарегистрировать пользователя.
+      description: Регистрация происходит по юзернейму и паролю.
+      tags:
+        - Пользователи
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+      responses:
+        '201':
+          description: Пользователь успешно создан.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterUserSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationErrorDRF'
+  /api/auth/login/:
+    post:
+      operationId: Залогиниться.
+      description: Получить токен авторизации по юзернейму и паролю.
+      tags:
+        - Пользователи
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+      responses:
+        '201':
+          description: 'Токен успешно получен.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccess'
+        '400':
+          $ref: '#/components/responses/ValidationErrorDRF'
+        '404':
+          $ref: '#/components/responses/UserNotFound'
+  /api/auth/logout/:
+    post:
+      operationId: Удалить токен.
+      description: Удалить токен.
+      security:
+        - TokenHeader: []
+      responses:
+        '204':
+          description: Токен успешно уничтожен.
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+      tags:
+        - Пользователи
+  /api/points/:
+    post:
+      operationId: Создать точку.
+      description: Создать точку.
+      security:
+        - TokenHeader: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PointForm'
+      responses:
+        '201':
+          description: Точка успешно создана.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointObject'
+        '400':
+          $ref: '#/components/responses/ValidationErrorDRF'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+      tags:
+        - Геомесседж
+  /api/points/messages/:
+    post:
+      operationId: Прикрепить сообщение.
+      description: Прикрепить сообщение.
+      security:
+        - TokenHeader: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageForm'
+      responses:
+        '201':
+          description: Сообщение успешно прикреплено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageObject'
+        '400':
+          $ref: '#/components/responses/ValidationErrorDRF'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+      tags:
+        - Геомесседж
+  /api/points/search/:
+    get:
+      operationId: Поиск точек.
+      description: Поиск точек.
+      security:
+        - TokenHeader: [ ]
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/latitude'
+        - $ref: '#/components/parameters/longitude'
+        - $ref: '#/components/parameters/radius'
+      responses:
+        '200':
+          description: Точки получены.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 67
+                    description: 'Общее количество объектов в базе'
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://localhost/api/users/?page=4
+                    description: 'Ссылка на следующую страницу'
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://localhost/api/users/?page=2
+                    description: 'Ссылка на предыдущую страницу'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PointObject'
+                    description: 'Список объектов текущей страницы'
+        '400':
+          $ref: '#/components/responses/ValidationErrorDRF'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+      tags:
+        - Геомесседж
+  /api/points/messages/search/:
+    get:
+      operationId: Поиск сообщений.
+      description: Поиск сообщений.
+      security:
+        - TokenHeader: [ ]
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/latitude'
+        - $ref: '#/components/parameters/longitude'
+        - $ref: '#/components/parameters/radius'
+      responses:
+        '200':
+          description: Сообщения получены.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 67
+                    description: 'Общее количество объектов в базе'
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://localhost/api/users/?page=4
+                    description: 'Ссылка на следующую страницу'
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://localhost/api/users/?page=2
+                    description: 'Ссылка на предыдущую страницу'
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MessageObject'
+                    description: 'Список объектов текущей страницы'
+        '400':
+          $ref: '#/components/responses/ValidationErrorDRF'
+        '401':
+          $ref: '#/components/responses/AuthenticationError'
+      tags:
+        - Геомесседж
+components:
+  schemas:
+    RegisterUser:
+      type: object
+      properties:
+        username:
+          type: string
+          description: "Уникальный юзернейм"
+          pattern: ^[\w.@+-]+\z
+          maxLength: 20
+          example: "us3rn@me"
+        password:
+          type: string
+          description: "Пароль"
+          example: "s3cr_tPwdd"
+      required:
+        - username
+        - password
+    RegisterUserSuccess:
+      type: object
+      properties:
+        username:
+          type: string
+          description: "Уникальный юзернейм"
+          pattern: ^[\w.@+-]+\z
+          maxLength: 20
+          example: "us3rn@me"
+      required:
+        - username
+    ValidationErrorDRF:
+      type: object
+      properties:
+        field_name:
+          description: 'Название поля, в котором произошли ошибки. Таких полей может быть несколько'
+          example: [ 'Required field.' ]
+          type: array
+          items:
+            type: string
+    LoginSuccess:
+      type: object
+      properties:
+        auth_token:
+          type: string
+    UserNotFound:
+      type: object
+      properties:
+        detail:
+          example: "No such user."
+          type: string
+    AuthenticationError:
+      description: Пользователь не авторизован
+      type: object
+      properties:
+        detail:
+          example: "Invalid or missing credentials."
+          type: string
+    PointForm:
+      description: Координаты точки
+      type: object
+      properties:
+        longitude:
+          type: number
+          example: 51.68585242317127
+        latitude:
+          type: number
+          example: 39.16755221073677
+    PointObject:
+      description: Объект точки
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 67
+        longitude:
+          type: number
+          example: 51.68585242317127
+        latitude:
+          type: number
+          example: 39.16755221073677
+    MessageForm:
+      description: Сообщение.
+      type: object
+      properties:
+        point_id:
+          type: integer
+          example: 67
+        text:
+          type: string
+          example: "Hey!"
+    MessageObject:
+      description: Объект сообщения.
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 420
+        author:
+          type: string
+          example: "us3rn@me"
+        text:
+          type: string
+        point:
+          $ref: '#/components/schemas/PointObject'
+  responses:
+    ValidationErrorDRF:
+      description: Отчет ошибок валидации в формате DRF.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationErrorDRF'
+    UserNotFound:
+      description: Пользователь не найден.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserNotFound'
+    AuthenticationError:
+      description: Пользователь не авторизован
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationError'
+  securitySchemes:
+    TokenHeader:
+      description: Заголовок токена.
+      type: http
+      scheme: basic
+  parameters:
+    page:
+      name: page
+      required: false
+      in: query
+      description: Номер страницы.
+      example: 2
+      schema:
+        type: integer
+    limit:
+      name: limit
+      required: false
+      in: query
+      description: Количество объектов на странице.
+      example: 20
+      schema:
+        type: integer
+    latitude:
+      name: latitude
+      required: true
+      in: query
+      description: Широта.
+      example: 39.16755221073677
+      schema:
+        type: integer
+    longitude:
+      name: longitude
+      required: true
+      in: query
+      description: Долгота.
+      example: 51.68585242317127
+      schema:
+        type: integer
+    radius:
+      name: radius
+      required: true
+      in: query
+      description: Радиус (км).
+      example: 2.5
+      schema:
+        type: number
