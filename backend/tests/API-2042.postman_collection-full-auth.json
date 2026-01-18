@@ -1,0 +1,2657 @@
+{
+  "info": {
+    "_postman_id": "82fe1a20-4703-4b8e-9dc5-b72aad86566e",
+    "name": "API-2042",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47857851",
+    "_collection_link": "https://go.postman.co/collection/47857851-82fe1a20-4703-4b8e-9dc5-b72aad86566e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "auth",
+          "item": [
+            {
+              "name": "register",
+              "item": [
+                {
+                  "name": "create_user",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "const responseData = pm.response.json();\r",
+                          "const responseSchema = {\r",
+                          "    \"type\": \"object\",\r",
+                          "    \"properties\":{\r",
+                          "        \"username\": {\"type\": \"string\"},\r",
+                          "    },\r",
+                          "    \"required\": [\"username\"],\r",
+                          "    \"additionalProperties\": false\r",
+                          "};\r",
+                          "\r",
+                          "pm.test(\"Статус-код ответа должен быть 201\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Убедитесь, что запроc на регистрацию нового пользователя, содержащий корректные данные, возвращает ответ со статус-кодом 201\"\r",
+                          "    ).to.be.eql(\"Created\");\r",
+                          "});\r",
+                          "pm.test('Структура ответа должна соответствовать ожидаемой', function () {\r",
+                          "    pm.response.to.have.jsonSchema(responseSchema);\r",
+                          "});\r",
+                          "pm.test(\"Вводимый юзернейм должен быть равен возвращаемому\", function () {\r",
+                          "    pm.expect(pm.response.json().username).to.eql(pm.collectionVariables.get(\"username\"));\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/register/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register",
+                        ""
+                      ]
+                    },
+                    "description": "Регистрация происходит по юзернейму и паролю."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "create_user_duplicate",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 400\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Запрос на /api/auth/register/ с уже зарегистрированным юзернеймом должен вернуть 400\"\r",
+                          "    ).to.be.eql(\"Bad Request\");\r",
+                          "});\r",
+                          "pm.test(\"Ответ в отчете поля пароля должен содержать строку о необходимости поля\", function () {\r",
+                          "    pm.expect(pm.response.json().username).to.deep.include(\"Пользователь с таким именем уже существует.\")\r",
+                          "});\r",
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"username\": \"{{username}}\",\n    \"password\": \"different_password\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/register/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register",
+                        ""
+                      ]
+                    },
+                    "description": "Регистрация происходит по юзернейму и паролю."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "create_user_no_password",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 400\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Если в запросе на /api/auth/register/ нет пароля, должен вернуться 400\"\r",
+                          "    ).to.be.eql(\"Bad Request\");\r",
+                          "});\r",
+                          "pm.test(\"Ответ в отчете поля пароля должен содержать строку о необходимости поля\", function () {\r",
+                          "    pm.expect(pm.response.json().password).to.deep.include(\"Обязательное поле.\")\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"username\": \"{{username}}\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/register/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register",
+                        ""
+                      ]
+                    },
+                    "description": "Регистрация происходит по юзернейму и паролю."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "create_user_no_username",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 400\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Если в запросе на /api/auth/register/ нет юзернейма, должен вернуться 400\"\r",
+                          "    ).to.be.eql(\"Bad Request\");\r",
+                          "});\r",
+                          "pm.test(\"Ответ в отчете поля пароля должен содержать строку о необходимости поля\", function () {\r",
+                          "    pm.expect(pm.response.json().username).to.deep.include(\"Обязательное поле.\")\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"password\": \"{{password}}\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/register/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register",
+                        ""
+                      ]
+                    },
+                    "description": "Регистрация происходит по юзернейму и паролю."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "create_user_invalid_username",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 400\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Если в запросе на /api/auth/register/ передан невалидный юзернейм, то должен вернуться 400\"\r",
+                          "    ).to.be.eql(\"Bad Request\");\r",
+                          "});\r",
+                          "pm.test(\"Ответ в отчете поля юзернейма должен содержать строку о плохом формате\", function () {\r",
+                          "    pm.expect(pm.response.json().username).to.deep.include(\r",
+                          "        \"Введите правильное имя пользователя. Оно может содержать только буквы, цифры и знаки @/./+/-/_.\"\r",
+                          "    )\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"username\": \";isinvalid\",\n  \"password\": \"{{password}}\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/register/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register",
+                        ""
+                      ]
+                    },
+                    "description": "Регистрация происходит по юзернейму и паролю."
+                  },
+                  "response": []
+                },
+                {
+                  "name": "create_user_invalid_password",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 400\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Если в запросе на /api/auth/register/ передан невалидный пароль, то должен вернуться 400\"\r",
+                          "    ).to.be.eql(\"Bad Request\");\r",
+                          "});\r",
+                          "pm.test(\"Ответ в отчете поля пароля должен содержать строку об ошибке\", function () {\r",
+                          "    pm.expect(pm.response.json().password).to.deep.include(\r",
+                          "        \"Введённый пароль слишком широко распространён.\"\r",
+                          "    )\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"username\": \"quite_unique_username\",\n  \"password\": \"qwerty\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/register/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "register",
+                        ""
+                      ]
+                    },
+                    "description": "Регистрация происходит по юзернейму и паролю."
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "login",
+              "item": [
+                {
+                  "name": "login",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "const responseData = pm.response.json();\r",
+                          "const responseSchema = {\r",
+                          "    \"type\": \"object\",\r",
+                          "    \"properties\":{\r",
+                          "        \"auth_token\": {\"type\": \"string\"},\r",
+                          "    },\r",
+                          "    \"required\": [\"auth_token\"],\r",
+                          "    \"additionalProperties\": false\r",
+                          "};\r",
+                          "\r",
+                          "pm.test(\"Статус-код ответа должен быть 200\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Корректный запроc на получение токена должен возвращать 200\"\r",
+                          "    ).to.be.eql(\"OK\");\r",
+                          "});\r",
+                          "pm.test('Структура ответа соответствует ожидаемой', function () {\r",
+                          "    pm.response.to.have.jsonSchema(responseSchema);\r",
+                          "    const auth_token = _.get(responseData, \"auth_token\");\r",
+                          "    if (auth_token) {\r",
+                          "        pm.collectionVariables.set(\"userToken\", auth_token);\r",
+                          "    }\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/login/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login",
+                        ""
+                      ]
+                    },
+                    "description": "Получить токен авторизации по юзернейму и паролю."
+                  },
+                  "response": [
+                    {
+                      "name": "Токен успешно получен.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Created",
+                      "code": 201,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"auth_token\": \"string\"\n}"
+                    },
+                    {
+                      "name": "Отчет ошибок валидации в формате DRF.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"field_name\": [\n    \"Required field.\"\n  ]\n}"
+                    },
+                    {
+                      "name": "Пользователь не найден.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"No such user.\"\n}"
+                    }
+                  ]
+                },
+                {
+                  "name": "login_non_existant_user",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 400\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Если в запросе на /api/auth/login/ указаны данные не существубщего юзера, должен вернуться 400\"\r",
+                          "    ).to.be.eql(\"Bad Request\");\r",
+                          "});\r",
+                          "pm.test(\"Отчет должен указывать на причину отказа\", function () {\r",
+                          "    pm.expect(pm.response.json().non_field_errors).to.deep.include(\r",
+                          "        \"Невозможно войти с предоставленными учетными данными.\"\r",
+                          "    )\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"username\": \"idonot\",\n  \"password\": \"exist\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/login/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login",
+                        ""
+                      ]
+                    },
+                    "description": "Получить токен авторизации по юзернейму и паролю."
+                  },
+                  "response": [
+                    {
+                      "name": "Токен успешно получен.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Created",
+                      "code": 201,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"auth_token\": \"string\"\n}"
+                    },
+                    {
+                      "name": "Отчет ошибок валидации в формате DRF.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"field_name\": [\n    \"Required field.\"\n  ]\n}"
+                    },
+                    {
+                      "name": "Пользователь не найден.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"No such user.\"\n}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "logout",
+              "item": [
+                {
+                  "name": "logout",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 204\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"При успешном логауте должен быть возвращен 204\"\r",
+                          "    ).to.be.eql(\"No Content\");\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{userToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/logout/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "logout",
+                        ""
+                      ]
+                    },
+                    "description": "Удалить токен."
+                  },
+                  "response": [
+                    {
+                      "name": "Токен успешно уничтожен.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/logout/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "logout",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "No Content",
+                      "code": 204,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "body": ""
+                    },
+                    {
+                      "name": "Пользователь не авторизован",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/logout/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "logout",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"Invalid or missing credentials.\"\n}"
+                    }
+                  ]
+                },
+                {
+                  "name": "try_token",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 401\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Если в запросе на логаут неверный токен, то нужно вернуть 401\"\r",
+                          "    ).to.be.eql(\"Unauthorized\");\r",
+                          "});\r",
+                          "pm.test(\"Отчет должен говорить о неверности токена\", function () {\r",
+                          "    pm.expect(pm.response.json().detail).to.deep.include(\"Недопустимый токен.\")\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{invalidToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/logout/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "logout",
+                        ""
+                      ]
+                    },
+                    "description": "Удалить токен."
+                  },
+                  "response": [
+                    {
+                      "name": "Токен успешно уничтожен.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/logout/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "logout",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "No Content",
+                      "code": 204,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "body": ""
+                    },
+                    {
+                      "name": "Пользователь не авторизован",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/logout/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "logout",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"Invalid or missing credentials.\"\n}"
+                    }
+                  ]
+                },
+                {
+                  "name": "relogin",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "const responseData = pm.response.json();\r",
+                          "const responseSchema = {\r",
+                          "    \"type\": \"object\",\r",
+                          "    \"properties\":{\r",
+                          "        \"auth_token\": {\"type\": \"string\"},\r",
+                          "    },\r",
+                          "    \"required\": [\"auth_token\"],\r",
+                          "    \"additionalProperties\": false\r",
+                          "};\r",
+                          "\r",
+                          "pm.test(\"Статус-код ответа должен быть 200\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Корректный запроc на получение токена должен возвращать 200\"\r",
+                          "    ).to.be.eql(\"OK\");\r",
+                          "});\r",
+                          "pm.test('Структура ответа соответствует ожидаемой', function () {\r",
+                          "    pm.response.to.have.jsonSchema(responseSchema);\r",
+                          "    const auth_token = _.get(responseData, \"auth_token\");\r",
+                          "    if (auth_token) {\r",
+                          "        pm.collectionVariables.set(\"userToken\", auth_token);\r",
+                          "    }\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/login/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "login",
+                        ""
+                      ]
+                    },
+                    "description": "Получить токен авторизации по юзернейму и паролю."
+                  },
+                  "response": [
+                    {
+                      "name": "Токен успешно получен.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Created",
+                      "code": 201,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"auth_token\": \"string\"\n}"
+                    },
+                    {
+                      "name": "Отчет ошибок валидации в формате DRF.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"field_name\": [\n    \"Required field.\"\n  ]\n}"
+                    },
+                    {
+                      "name": "Пользователь не найден.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"username\": \"us3rn@me\",\n  \"password\": \"s3cr_tPwdd\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/login/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "login",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"No such user.\"\n}"
+                    }
+                  ]
+                },
+                {
+                  "name": "logout_invalid_token",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 401\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Если в запросе на логаут неверный токен, то нужно вернуть 401\"\r",
+                          "    ).to.be.eql(\"Unauthorized\");\r",
+                          "});\r",
+                          "pm.test(\"Отчет должен говорить о неверности токена\", function () {\r",
+                          "    pm.expect(pm.response.json().detail).to.deep.include(\"Недопустимый токен.\")\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{invalidToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/logout/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "logout",
+                        ""
+                      ]
+                    },
+                    "description": "Удалить токен."
+                  },
+                  "response": [
+                    {
+                      "name": "Токен успешно уничтожен.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/logout/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "logout",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "No Content",
+                      "code": 204,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "body": ""
+                    },
+                    {
+                      "name": "Пользователь не авторизован",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/logout/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "logout",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"Invalid or missing credentials.\"\n}"
+                    }
+                  ]
+                },
+                {
+                  "name": "logout_no_auth",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Статус-код ответа должен быть 401\", function () {\r",
+                          "    pm.expect(\r",
+                          "        pm.response.status,\r",
+                          "        \"Если в запросе на логаут нет токена, то нужно вернуть 401\"\r",
+                          "    ).to.be.eql(\"Unauthorized\");\r",
+                          "});\r",
+                          "pm.test(\"Отчет должен говорить об отсутствии токена\", function () {\r",
+                          "    pm.expect(pm.response.json().detail).to.deep.include(\"Учетные данные не были предоставлены.\")\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "noauth"
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/auth/logout/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "auth",
+                        "logout",
+                        ""
+                      ]
+                    },
+                    "description": "Удалить токен."
+                  },
+                  "response": [
+                    {
+                      "name": "Токен успешно уничтожен.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/logout/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "logout",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "No Content",
+                      "code": 204,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "body": ""
+                    },
+                    {
+                      "name": "Пользователь не авторизован",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/auth/logout/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "auth",
+                            "logout",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"Invalid or missing credentials.\"\n}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "points",
+          "item": [
+            {
+              "name": "create",
+              "item": [
+                {
+                  "name": "Создать точку.",
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"longitude\": 51.68585242317127,\n  \"latitude\": 39.16755221073677\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/points/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "points",
+                        ""
+                      ]
+                    },
+                    "description": "Создать точку."
+                  },
+                  "response": [
+                    {
+                      "name": "Точка успешно создана.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"longitude\": 51.68585242317127,\n  \"latitude\": 39.16755221073677\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Created",
+                      "code": 201,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"id\": 67,\n  \"longitude\": 51.68585242317127,\n  \"latitude\": 39.16755221073677\n}"
+                    },
+                    {
+                      "name": "Отчет ошибок валидации в формате DRF.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"longitude\": 51.68585242317127,\n  \"latitude\": 39.16755221073677\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"field_name\": [\n    \"Required field.\"\n  ]\n}"
+                    },
+                    {
+                      "name": "Пользователь не авторизован",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"longitude\": 51.68585242317127,\n  \"latitude\": 39.16755221073677\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            ""
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"Invalid or missing credentials.\"\n}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "search",
+              "item": [
+                {
+                  "name": "Поиск точек.",
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/points/search/?limit=20&page=2&latitude=39.16755221073677&longitude=51.68585242317127&radius=2.5",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "points",
+                        "search",
+                        ""
+                      ],
+                      "query": [
+                        {
+                          "key": "limit",
+                          "value": "20",
+                          "description": "Количество объектов на странице."
+                        },
+                        {
+                          "key": "page",
+                          "value": "2",
+                          "description": "Номер страницы."
+                        },
+                        {
+                          "key": "latitude",
+                          "value": "39.16755221073677",
+                          "description": "Широта."
+                        },
+                        {
+                          "key": "longitude",
+                          "value": "51.68585242317127",
+                          "description": "Долгота."
+                        },
+                        {
+                          "key": "radius",
+                          "value": "2.5",
+                          "description": "Радиус (км)."
+                        }
+                      ]
+                    },
+                    "description": "Поиск точек."
+                  },
+                  "response": [
+                    {
+                      "name": "Точки получены.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/search/?limit=20&page=2&latitude=39.16755221073677&longitude=51.68585242317127&radius=2.5",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            "search",
+                            ""
+                          ],
+                          "query": [
+                            {
+                              "description": "Количество объектов на странице.",
+                              "key": "limit",
+                              "value": "20"
+                            },
+                            {
+                              "description": "Номер страницы.",
+                              "key": "page",
+                              "value": "2"
+                            },
+                            {
+                              "description": "Широта.",
+                              "key": "latitude",
+                              "value": "39.16755221073677"
+                            },
+                            {
+                              "description": "Долгота.",
+                              "key": "longitude",
+                              "value": "51.68585242317127"
+                            },
+                            {
+                              "description": "Радиус (км).",
+                              "key": "radius",
+                              "value": "2.5"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"count\": 67,\n  \"next\": \"http://localhost/api/users/?page=4\",\n  \"previous\": \"http://localhost/api/users/?page=2\",\n  \"results\": [\n    {\n      \"id\": 67,\n      \"longitude\": 51.68585242317127,\n      \"latitude\": 39.16755221073677\n    },\n    {\n      \"id\": 67,\n      \"longitude\": 51.68585242317127,\n      \"latitude\": 39.16755221073677\n    }\n  ]\n}"
+                    },
+                    {
+                      "name": "Отчет ошибок валидации в формате DRF.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/search/?limit=20&page=2&latitude=39.16755221073677&longitude=51.68585242317127&radius=2.5",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            "search",
+                            ""
+                          ],
+                          "query": [
+                            {
+                              "description": "Количество объектов на странице.",
+                              "key": "limit",
+                              "value": "20"
+                            },
+                            {
+                              "description": "Номер страницы.",
+                              "key": "page",
+                              "value": "2"
+                            },
+                            {
+                              "description": "Широта.",
+                              "key": "latitude",
+                              "value": "39.16755221073677"
+                            },
+                            {
+                              "description": "Долгота.",
+                              "key": "longitude",
+                              "value": "51.68585242317127"
+                            },
+                            {
+                              "description": "Радиус (км).",
+                              "key": "radius",
+                              "value": "2.5"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"field_name\": [\n    \"Required field.\"\n  ]\n}"
+                    },
+                    {
+                      "name": "Пользователь не авторизован",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/search/?limit=20&page=2&latitude=39.16755221073677&longitude=51.68585242317127&radius=2.5",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            "search",
+                            ""
+                          ],
+                          "query": [
+                            {
+                              "description": "Количество объектов на странице.",
+                              "key": "limit",
+                              "value": "20"
+                            },
+                            {
+                              "description": "Номер страницы.",
+                              "key": "page",
+                              "value": "2"
+                            },
+                            {
+                              "description": "Широта.",
+                              "key": "latitude",
+                              "value": "39.16755221073677"
+                            },
+                            {
+                              "description": "Долгота.",
+                              "key": "longitude",
+                              "value": "51.68585242317127"
+                            },
+                            {
+                              "description": "Радиус (км).",
+                              "key": "radius",
+                              "value": "2.5"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"Invalid or missing credentials.\"\n}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "messages",
+          "item": [
+            {
+              "name": "search",
+              "item": [
+                {
+                  "name": "Поиск сообщений.",
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/points/messages/search/?limit=20&page=2&latitude=39.16755221073677&longitude=51.68585242317127&radius=2.5",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "points",
+                        "messages",
+                        "search",
+                        ""
+                      ],
+                      "query": [
+                        {
+                          "key": "limit",
+                          "value": "20",
+                          "description": "Количество объектов на странице."
+                        },
+                        {
+                          "key": "page",
+                          "value": "2",
+                          "description": "Номер страницы."
+                        },
+                        {
+                          "key": "latitude",
+                          "value": "39.16755221073677",
+                          "description": "Широта."
+                        },
+                        {
+                          "key": "longitude",
+                          "value": "51.68585242317127",
+                          "description": "Долгота."
+                        },
+                        {
+                          "key": "radius",
+                          "value": "2.5",
+                          "description": "Радиус (км)."
+                        }
+                      ]
+                    },
+                    "description": "Поиск сообщений."
+                  },
+                  "response": [
+                    {
+                      "name": "Сообщения получены.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/messages/search/?limit=20&page=2&latitude=39.16755221073677&longitude=51.68585242317127&radius=2.5",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            "messages",
+                            "search",
+                            ""
+                          ],
+                          "query": [
+                            {
+                              "description": "Количество объектов на странице.",
+                              "key": "limit",
+                              "value": "20"
+                            },
+                            {
+                              "description": "Номер страницы.",
+                              "key": "page",
+                              "value": "2"
+                            },
+                            {
+                              "description": "Широта.",
+                              "key": "latitude",
+                              "value": "39.16755221073677"
+                            },
+                            {
+                              "description": "Долгота.",
+                              "key": "longitude",
+                              "value": "51.68585242317127"
+                            },
+                            {
+                              "description": "Радиус (км).",
+                              "key": "radius",
+                              "value": "2.5"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"count\": 67,\n  \"next\": \"http://localhost/api/users/?page=4\",\n  \"previous\": \"http://localhost/api/users/?page=2\",\n  \"results\": [\n    {\n      \"id\": 420,\n      \"author\": \"us3rn@me\",\n      \"text\": \"string\",\n      \"point\": {\n        \"id\": 67,\n        \"longitude\": 51.68585242317127,\n        \"latitude\": 39.16755221073677\n      }\n    },\n    {\n      \"id\": 420,\n      \"author\": \"us3rn@me\",\n      \"text\": \"string\",\n      \"point\": {\n        \"id\": 67,\n        \"longitude\": 51.68585242317127,\n        \"latitude\": 39.16755221073677\n      }\n    }\n  ]\n}"
+                    },
+                    {
+                      "name": "Отчет ошибок валидации в формате DRF.",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/messages/search/?limit=20&page=2&latitude=39.16755221073677&longitude=51.68585242317127&radius=2.5",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            "messages",
+                            "search",
+                            ""
+                          ],
+                          "query": [
+                            {
+                              "description": "Количество объектов на странице.",
+                              "key": "limit",
+                              "value": "20"
+                            },
+                            {
+                              "description": "Номер страницы.",
+                              "key": "page",
+                              "value": "2"
+                            },
+                            {
+                              "description": "Широта.",
+                              "key": "latitude",
+                              "value": "39.16755221073677"
+                            },
+                            {
+                              "description": "Долгота.",
+                              "key": "longitude",
+                              "value": "51.68585242317127"
+                            },
+                            {
+                              "description": "Радиус (км).",
+                              "key": "radius",
+                              "value": "2.5"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"field_name\": [\n    \"Required field.\"\n  ]\n}"
+                    },
+                    {
+                      "name": "Пользователь не авторизован",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/points/messages/search/?limit=20&page=2&latitude=39.16755221073677&longitude=51.68585242317127&radius=2.5",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "points",
+                            "messages",
+                            "search",
+                            ""
+                          ],
+                          "query": [
+                            {
+                              "description": "Количество объектов на странице.",
+                              "key": "limit",
+                              "value": "20"
+                            },
+                            {
+                              "description": "Номер страницы.",
+                              "key": "page",
+                              "value": "2"
+                            },
+                            {
+                              "description": "Широта.",
+                              "key": "latitude",
+                              "value": "39.16755221073677"
+                            },
+                            {
+                              "description": "Долгота.",
+                              "key": "longitude",
+                              "value": "51.68585242317127"
+                            },
+                            {
+                              "description": "Радиус (км).",
+                              "key": "radius",
+                              "value": "2.5"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "body": "{\n  \"detail\": \"Invalid or missing credentials.\"\n}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Прикрепить сообщение.",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"point_id\": 67,\n  \"text\": \"Hey!\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/points/messages/",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "points",
+                    "messages",
+                    ""
+                  ]
+                },
+                "description": "Прикрепить сообщение."
+              },
+              "response": [
+                {
+                  "name": "Сообщение успешно прикреплено.",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"point_id\": 67,\n  \"text\": \"Hey!\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/points/messages/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "points",
+                        "messages",
+                        ""
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"id\": 420,\n  \"author\": \"us3rn@me\",\n  \"text\": \"string\",\n  \"point\": {\n    \"id\": 67,\n    \"longitude\": 51.68585242317127,\n    \"latitude\": 39.16755221073677\n  }\n}"
+                },
+                {
+                  "name": "Отчет ошибок валидации в формате DRF.",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"point_id\": 67,\n  \"text\": \"Hey!\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/points/messages/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "points",
+                        "messages",
+                        ""
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"field_name\": [\n    \"Required field.\"\n  ]\n}"
+                },
+                {
+                  "name": "Пользователь не авторизован",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"point_id\": 67,\n  \"text\": \"Hey!\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/points/messages/",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "points",
+                        "messages",
+                        ""
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"detail\": \"Invalid or missing credentials.\"\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "/"
+    },
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "userToken",
+      "value": ""
+    },
+    {
+      "key": "invalidToken",
+      "value": ""
+    }
+  ]
+}

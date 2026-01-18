@@ -1,0 +1,17 @@
+volumes:
+  postgres_data:
+
+services:
+  postgres:
+    image: postgis/postgis:18-3.6
+    env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+  backend:
+    build: backend
+    env_file: .env
+    ports:
+      - "1111:80"
+    depends_on:
+      - postgres

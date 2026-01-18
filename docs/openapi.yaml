@@ -43,8 +43,6 @@ paths:
                 $ref: '#/components/schemas/LoginSuccess'
         '400':
           $ref: '#/components/responses/ValidationErrorDRF'
-        '404':
-          $ref: '#/components/responses/UserNotFound'
   /api/auth/logout/:
     post:
       operationId: Удалить токен.
@@ -243,12 +241,6 @@ components:
       properties:
         auth_token:
           type: string
-    UserNotFound:
-      type: object
-      properties:
-        detail:
-          example: "No such user."
-          type: string
     AuthenticationError:
       description: Пользователь не авторизован
       type: object
@@ -310,12 +302,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ValidationErrorDRF'
-    UserNotFound:
-      description: Пользователь не найден.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UserNotFound'
     AuthenticationError:
       description: Пользователь не авторизован
       content:
