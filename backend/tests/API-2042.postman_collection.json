@@ -7730,72 +7730,71 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "/"
+      "value": "localhost:1111"
     },
     {
       "key": "username",
-      "value": ""
+      "value": "us3rn@me"
     },
     {
       "key": "password",
-      "value": ""
+      "value": "s3cr_tPwdd"
     },
     {
       "key": "userToken",
-      "value": ""
+      "value": "04a514c44794e213d7a096807383c09104b3198e"
     },
     {
       "key": "invalidToken",
-      "value": ""
+      "value": "2ec01bddf88392f1188e3bd2e3e1ff68d4e3c2aa"
     },
     {
       "key": "VladimirRadius",
-      "value": ""
+      "value": "250.67"
     },
     {
       "key": "pointMoscowLongitude",
-      "value": ""
+      "value": "37.620393"
     },
     {
       "key": "pointMoscowLatitude",
-      "value": ""
+      "value": "55.753960"
     },
     {
       "key": "pointRyazanLongitude",
-      "value": ""
+      "value": "39.6916"
     },
     {
       "key": "pointRyazanLatitude",
-      "value": ""
+      "value": "54.6269"
     },
     {
       "key": "pointPeterLongitude",
-      "value": ""
+      "value": "30.3141"
     },
     {
       "key": "pointPeterLatitude",
-      "value": ""
+      "value": "59.9386"
     },
     {
       "key": "pointVladimirLongitude",
-      "value": ""
+      "value": "40.41787"
     },
     {
       "key": "pointVladimirLatitude",
-      "value": ""
+      "value": "56.1446"
     },
     {
       "key": "MoscowId",
-      "value": ""
+      "value": 1
     },
     {
       "key": "RyazanId",
-      "value": ""
+      "value": 2
     },
     {
       "key": "PeterId",
-      "value": "",
-      "type": "default"
+      "value": 3
     }
   ]
 }

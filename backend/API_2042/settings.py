@@ -8,7 +8,7 @@ SECRET_KEY = getenv('DJANGO_SECRET_KEY')
 
 DEBUG = getenv('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 
 
 # Application definition

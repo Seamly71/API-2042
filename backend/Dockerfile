@@ -1,4 +1,5 @@
-FROM mygeodjango:3.11.9
+FROM seamly71/mygeodjango:3.11.9
+# Зачем я залил зависимости в dockerhub читайте в mygeodjango/readme.txt
 
 WORKDIR /app
 COPY requirements.txt .
