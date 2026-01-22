@@ -97,6 +97,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'API_2042.authentication.BearerAuthentication',
     ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
 

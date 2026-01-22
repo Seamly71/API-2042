@@ -25,11 +25,12 @@ sudo apt install docker-compose-plugin
 ```
 * Запускаем проект.
 ```commandline
-sudo docker compose -f docker-compose.yml up
+(amd64) sudo docker compose -f docker-compose.yml up
+(arm64) sudo docker compose -f docker-compose.arm64.yml up
 ```
 * Применяем миграции.
 ```commandline
-docker compose run backend sh python manage.py makemigrations
+docker compose run backend sh python manage.py migrate
 ```
 * Проект доступен в сети устройства на 1111м порту.
 ```
@@ -76,7 +77,11 @@ Authorization: Bearer 26545c4d7e7cc88130d8f2a94ac373e2684b52ca
 Postman-коллекция доступна в backend/tests/API-2042.postman_collection.json.
 Перед каждым исполнением тестов необходимо исполнить следующую команду.
 ```commandline
-docker compose run backend sh tests/setup.sh
+docker compose -f docker-compose.yml run backend sh tests/setup.sh
+```
+* Юнит тесты DRF TestCase.
+```commandline
+docker compose -f docker-compose.yml run backend python manage.py test -v 3
 ```
 
 ## Автор

@@ -1,0 +1,21 @@
+volumes:
+  postgres_data:
+
+services:
+  postgres:
+    build: postgis
+    env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    platform: linux/arm64
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile.arm64
+    env_file: .env
+    ports:
+      - "1111:80"
+    depends_on:
+      - postgres
+    platform: linux/arm64
